@@ -20,18 +20,6 @@ AggregatorV2V3Interface {
     registryKey = registryKey_;
   }
 
-  function decimals() external view returns (uint8) {
-    return 18;
-  }
-
-  function description() external view returns (string memory) {
-    return "TfiFeedAdapter";
-  }
-
-  function getAnswer(uint256 roundId) external view returns (int256) {
-    return roundId;
-  }
-
   /**
    * @notice details for the given aggregator round
    * @param roundId target aggregator round (NOT OCR round). Must fit in uint32
@@ -54,21 +42,8 @@ AggregatorV2V3Interface {
       uint80 answeredInRound
     )
   {
-    return (roundId, 0, 0, 0, 0);
+    return registry.getRoundData(registryKey, roundId);
   }
-
-  function getTimestamp(uint256 roundId) external view returns (uint256) {
-    return roundId;
-  }
-
-  function latestAnswer() external view returns (int256) {
-    return 0;
-  }
-
-  function latestRound() external view returns (uint256) {
-    return 0;
-  }
-
 
   /**
    * @notice aggregator details for the most recently transmitted report
@@ -91,14 +66,42 @@ AggregatorV2V3Interface {
       uint80 answeredInRound
     )
   {
-    return (0, 0, 0, 0, 0);
+    return registry.latestRoundData(registryKey);
   }
 
-  function latestTimestamp() external view returns (uint256) {
+  function decimals() external pure returns (uint8) {
+    return 18;
+  }
+
+  function description() external pure returns (string memory) {
+    return "TfiFeedAdapter";
+  }
+
+  function version() external pure returns (uint256) {
     return 0;
   }
 
-  function version() external view returns (uint256) {
-    return 0;
+  /** Intentionally not implemented
+      https://docs.chain.link/data-feeds/api-reference/
+   */
+  function getAnswer(uint256) external pure returns (int256) {
+    revert("not implemented");
   }
+
+  function getTimestamp(uint256) external pure returns (uint256) {
+    revert("not implemented");
+  }
+
+  function latestAnswer() external pure returns (int256) {
+    revert("not implemented");
+  }
+
+  function latestRound() external pure returns (uint256) {
+    revert("not implemented");
+  }
+
+  function latestTimestamp() external pure returns (uint256) {
+    revert("not implemented");
+  }
+
 }
