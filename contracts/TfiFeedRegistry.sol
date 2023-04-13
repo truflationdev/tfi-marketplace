@@ -14,8 +14,8 @@ AccessControlUpgradeable {
     uint256 updatedAt;
   }
   uint80 public latestRound;
-  mapping (string => bool) private global;
-  mapping (string => mapping(uint80 => RoundData)) private data;
+  mapping (bytes32 => bool) private global;
+  mapping (bytes32 => mapping(uint80 => RoundData)) private data;
 
   function initialize(
   ) public initializer {
@@ -23,7 +23,7 @@ AccessControlUpgradeable {
     __AccessControl_init();
   }
 
-  function getRoundData(string memory key, uint80 roundId)
+  function getRoundData(bytes32 key, uint80 roundId)
   external
   view
   virtual
@@ -42,7 +42,7 @@ AccessControlUpgradeable {
     return (roundId, rd.answer, rd.startedAt, rd.updatedAt, latestRound);
   }
 
-  function latestRoundData(string memory key)
+  function latestRoundData(bytes32 key)
   external
   view
   virtual
@@ -58,7 +58,7 @@ AccessControlUpgradeable {
   }
 
   function setRoundData(
-    string memory key,
+    bytes32 key,
     uint80 roundId,
     int256 answer,
     uint256 startedAt,
@@ -73,14 +73,14 @@ AccessControlUpgradeable {
   }
 
   function roleId(
-    string memory role,
-    string memory key
+    bytes32 role,
+    bytes32 key
   ) public pure returns (bytes32) {
     return keccak256(abi.encodePacked(role, key));
   }
 
   function setGlobal(
-    string memory key_,
+    bytes32 key_,
     bool value_
   ) public {
     global[key_] = value_;

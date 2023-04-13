@@ -9,11 +9,11 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 contract TfiFeedAdapter is Initializable, OwnableUpgradeable,
 AggregatorV2V3Interface {
   TfiFeedRegistry public registry;
-  string public registryKey;
+  bytes32 public registryKey;
 
   function initialize(
     TfiFeedRegistry registry_,
-    string memory registryKey_
+    bytes32 registryKey_
   ) public initializer {
     __Ownable_init();
     registry = registry_;
