@@ -57,7 +57,7 @@ describe("TfiFeedRegistry", () => {
     const updatedAt = 1234567890;
     const answeredInRound = 1;
     const [r, a, s, u, ar ] =   await tfiFeedRegistry.latestRoundData(
-      registryKey
+      registryKey, ethers.constants.AddressZero
     );
     expect(r).to.equal(roundId);
     expect(a).to.equal(answer);
@@ -80,7 +80,7 @@ describe("TfiFeedAdapter", () => {
       [tfiFeedRegistry.address, registryKey]
     );
     tfiFeedRegistry.grantRoleForKey(
-      ethers.utils.formatBytes32String("get"),
+      ethers.utils.formatBytes32String("proxy"),
       registryKey,
       tfiFeedAdapter.address
     );

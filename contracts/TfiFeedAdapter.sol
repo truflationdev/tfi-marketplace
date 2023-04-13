@@ -38,7 +38,7 @@ contract TfiFeedAdapter is Initializable, AggregatorV2V3Interface {
       uint80 answeredInRound
     )
   {
-    return registry.getRoundData(registryKey, roundId);
+    return registry.getRoundData(registryKey, roundId, msg.sender);
   }
 
   /**
@@ -62,7 +62,7 @@ contract TfiFeedAdapter is Initializable, AggregatorV2V3Interface {
       uint80 answeredInRound
     )
   {
-    return registry.latestRoundData(registryKey);
+    return registry.latestRoundData(registryKey, msg.sender);
   }
 
   function roleId(bytes32 role)
@@ -104,5 +104,4 @@ contract TfiFeedAdapter is Initializable, AggregatorV2V3Interface {
   function latestTimestamp() external pure returns (uint256) {
     revert("not implemented");
   }
-
 }

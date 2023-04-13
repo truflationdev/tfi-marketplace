@@ -8,6 +8,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 bytes32 constant SET = "set";
 bytes32 constant GET = "get";
+bytes32 constant PROXY = "proxy";
 
 contract TfiFeedRegistry is Initializable, OwnableUpgradeable,
 AccessControlUpgradeable {
@@ -27,7 +28,7 @@ AccessControlUpgradeable {
     _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
   }
 
-  function getRoundData(bytes32 key, uint80 roundId)
+  function getRoundData(bytes32 key, uint80 roundId, address sender)
   public
   view
   virtual
@@ -40,13 +41,17 @@ AccessControlUpgradeable {
   )
   {
     require(
-      global[key] || hasRole(roleId(GET, key), msg.sender)
+      global[key] || hasRole(roleId(GET, key), msg.sender) ||
+      (
+	hasRole(roleId(PROXY, key), msg.sender) &&
+      	hasRole(roleId(GET, key), sender)
+      )
     );
     RoundData memory rd = data[key][roundId];
     return (roundId, rd.answer, rd.startedAt, rd.updatedAt, latestRound);
   }
 
-  function latestRoundData(bytes32 key)
+  function latestRoundData(bytes32 key, address sender)
   external
   view
   virtual
@@ -58,7 +63,7 @@ AccessControlUpgradeable {
     uint80 answeredInRound
   )
   {
-    return getRoundData(key, latestRound);
+    return getRoundData(key, latestRound, sender);
   }
 
   function setRoundData(
