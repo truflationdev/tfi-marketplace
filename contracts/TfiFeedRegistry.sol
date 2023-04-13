@@ -6,6 +6,9 @@ import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol"
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
+bytes32 constant SET = "set";
+bytes32 constant GET = "get";
+
 contract TfiFeedRegistry is Initializable, OwnableUpgradeable,
 AccessControlUpgradeable {
   struct RoundData {
@@ -21,10 +24,11 @@ AccessControlUpgradeable {
   ) public initializer {
     __Ownable_init();
     __AccessControl_init();
+    _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
   }
 
   function getRoundData(bytes32 key, uint80 roundId)
-  external
+  public
   view
   virtual
   returns (
@@ -36,7 +40,7 @@ AccessControlUpgradeable {
   )
   {
     require(
-      global[key] || hasRole(roleId("read", key), msg.sender)
+      global[key] || hasRole(roleId(GET, key), msg.sender)
     );
     RoundData memory rd = data[key][roundId];
     return (roundId, rd.answer, rd.startedAt, rd.updatedAt, latestRound);
@@ -54,7 +58,7 @@ AccessControlUpgradeable {
     uint80 answeredInRound
   )
   {
-    return this.getRoundData(key, latestRound);
+    return getRoundData(key, latestRound);
   }
 
   function setRoundData(
@@ -67,7 +71,7 @@ AccessControlUpgradeable {
   external
   virtual
   {
-    require(hasRole(roleId("set", key), msg.sender));
+    require(hasRole(roleId(SET, key), msg.sender), "no permission");
     latestRound = roundId;
     data[key][roundId] = RoundData(answer, startedAt, updatedAt);
   }
@@ -85,4 +89,21 @@ AccessControlUpgradeable {
   ) public {
     global[key_] = value_;
   }
+
+  function grantRoleForKey(
+    bytes32 role_,
+    bytes32 key_,
+    address address_
+  ) external {
+    grantRole(roleId(role_, key_), address_);
+  }
+
+  function revokeRoleForKey(
+    bytes32 role_,
+    bytes32 key_,
+    address address_
+  ) external {
+    revokeRole(roleId(role_, key_), address_);
+  }
+    
 }

@@ -3,19 +3,15 @@ pragma solidity ^0.8.0;
 
 import "./TfiFeedRegistry.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV2V3Interface.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract TfiFeedAdapter is Initializable, OwnableUpgradeable,
-AggregatorV2V3Interface {
+contract TfiFeedAdapter is Initializable, AggregatorV2V3Interface {
   TfiFeedRegistry public registry;
   bytes32 public registryKey;
-
   function initialize(
     TfiFeedRegistry registry_,
     bytes32 registryKey_
   ) public initializer {
-    __Ownable_init();
     registry = registry_;
     registryKey = registryKey_;
   }
@@ -67,6 +63,11 @@ AggregatorV2V3Interface {
     )
   {
     return registry.latestRoundData(registryKey);
+  }
+
+  function roleId(bytes32 role)
+  public view returns (bytes32) {
+    return registry.roleId(role, registryKey);
   }
 
   function decimals() external pure returns (uint8) {
